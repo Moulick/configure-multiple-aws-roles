@@ -13,6 +13,7 @@ env:
   AWS_CONFIG_FILE: ${{ github.workspace }}/.aws/config # Custom path profiles are to be used with Docker containers
   AWS_SHARED_CREDENTIALS_FILE: ${{ github.workspace }}/.aws/credentials # Similar to above
   AWS_DEFAULT_REGION: ap-south-1
+  AWS_REGION: ap-south-1
   REPO_NAME: ${{ github.event.repository.name }}
   PROFILE_ROLE_1: "PROFILE_ROLE_1"
   PROFILE_ROLE_2: "PROFILE_ROLE_2"
@@ -33,7 +34,7 @@ jobs:
         uses: Moulick/configure-multiple-aws-roles@v4
         with:
           role-to-assume: arn:aws:iam::111111111111:role/role-1
-          role-session-name: GithubActions-${{ env.REPO_NAME }}-${{ github.workflow }}-${{ github.run_id }}
+          role-session-name: GitHubActions-${{ github.event.repository.name }}-${{ github.workflow }}-${{ github.run_id }}
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
           profile: ${{ env.PROFILE_ROLE_1 }}
           only-profile: true
@@ -44,7 +45,7 @@ jobs:
         uses: Moulick/configure-multiple-aws-roles@v4
         with:
           role-to-assume: arn:aws:iam::111111111111:role/role-2
-          role-session-name: GithubActions-${{ env.REPO_NAME }}-${{ github.workflow }}-${{ github.run_id }}
+          role-session-name: GitHubActions-${{ github.event.repository.name }}-${{ github.workflow }}-${{ github.run_id }}
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
           profile: ${{ env.PROFILE_ROLE_2 }}
           only-profile: true

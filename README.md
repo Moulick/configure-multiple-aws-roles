@@ -56,7 +56,7 @@ jobs:
         uses: Moulick/configure-multiple-aws-roles@v4
         with:
           role-to-assume: arn:aws:iam::123456789012:role/role-1
-          role-session-name: GithubActions-${{ env.REPO_NAME }}-${{ github.workflow }}-${{ github.run_id }}
+          role-session-name: GitHubActions-${{ github.event.repository.name }}-${{ github.workflow }}-${{ github.run_id }}
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
           profile: ${{ env.PROFILE_ROLE_1 }}
           only-profile: true
@@ -67,7 +67,7 @@ jobs:
         uses: Moulick/configure-multiple-aws-roles@v4
         with:
           role-to-assume: arn:aws:iam::123456789012:role/role-2
-          role-session-name: GithubActions-${{ env.REPO_NAME }}-${{ github.workflow }}-${{ github.run_id }}
+          role-session-name: GitHubActions-${{ github.event.repository.name }}-${{ github.workflow }}-${{ github.run_id }}
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
           profile: ${{ env.PROFILE_ROLE_2 }}
           only-profile: true
@@ -109,7 +109,7 @@ jobs:
         uses: Moulick/configure-multiple-aws-roles@v4
         with:
           role-to-assume: arn:aws:iam::123456789012:role/role-test
-          role-session-name: GithubActions-${{ env.REPO_NAME }}-${{ github.workflow }}-${{ github.run_id }}
+          role-session-name: GitHubActions-${{ github.event.repository.name }}-${{ github.workflow }}-${{ github.run_id }}
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
           profile: ${{ env.PROFILE_TEST }}
           only-profile: true
