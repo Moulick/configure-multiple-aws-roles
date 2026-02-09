@@ -7,7 +7,7 @@ branding:
   color: "orange"
 
 inputs:
-  # Additional inputs vs aws-actions/configure-aws-credentials@v4
+  # Additional inputs vs aws-actions/configure-aws-credentials@v6
   profile:
     required: false
     description: Name of profile to be created
@@ -21,7 +21,7 @@ inputs:
     default: "false"
     required: false
 
-  # Copied from aws-actions/configure-aws-credentials@v4
+  # Copied from aws-actions/configure-aws-credentials@v6
   aws-region:
     description: AWS Region, e.g. us-east-2
     required: true
@@ -111,7 +111,7 @@ runs:
   steps:
     - name: Get AWS Credentials
       id: aws-credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         output-credentials: true
 
