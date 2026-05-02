@@ -111,7 +111,7 @@ runs:
   steps:
     - name: Get AWS Credentials
       id: aws-credentials
-      uses: aws-actions/configure-aws-credentials@v6
+      uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6.1.0
       with:
         output-credentials: true
 
@@ -139,21 +139,27 @@ runs:
     - name: Save to Profile
       id: save-to-profile
       shell: bash
+      env:
+        INPUTS_PROFILE: ${{ inputs.profile }}
+        INPUTS_AWS_REGION: ${{ inputs.aws-region }}
+        STEPS_AWS_CREDENTIALS_OUTPUTS_AWS_ACCESS_KEY_ID: ${{ steps.aws-credentials.outputs.aws-access-key-id }}
+        STEPS_AWS_CREDENTIALS_OUTPUTS_AWS_SECRET_ACCESS_KEY: ${{ steps.aws-credentials.outputs.aws-secret-access-key }}
+        STEPS_AWS_CREDENTIALS_OUTPUTS_AWS_SESSION_TOKEN: ${{ steps.aws-credentials.outputs.aws-session-token }}
       run: |
-        echo "Configuring AWS Profile ${{ inputs.profile }}"
-        aws configure set --profile ${{ inputs.profile }} region                ${{ inputs.aws-region }}
-        aws configure set --profile ${{ inputs.profile }} aws_access_key_id     ${{ steps.aws-credentials.outputs.aws-access-key-id }}
-        aws configure set --profile ${{ inputs.profile }} aws_secret_access_key ${{ steps.aws-credentials.outputs.aws-secret-access-key }}
-        aws configure set --profile ${{ inputs.profile }} aws_session_token     ${{ steps.aws-credentials.outputs.aws-session-token }}
-        echo "profile=${{ inputs.profile }}" >> $GITHUB_OUTPUT
-        printf "::notice::\x1b[32;1mAWS Profile ${{ inputs.profile }} configured successfully\x1b[0m\n"
+        echo "Configuring AWS Profile ${INPUTS_PROFILE}"
+        aws configure set --profile ${INPUTS_PROFILE} region                ${INPUTS_AWS_REGION}
+        aws configure set --profile ${INPUTS_PROFILE} aws_access_key_id     ${STEPS_AWS_CREDENTIALS_OUTPUTS_AWS_ACCESS_KEY_ID}
+        aws configure set --profile ${INPUTS_PROFILE} aws_secret_access_key ${STEPS_AWS_CREDENTIALS_OUTPUTS_AWS_SECRET_ACCESS_KEY}
+        aws configure set --profile ${INPUTS_PROFILE} aws_session_token     ${STEPS_AWS_CREDENTIALS_OUTPUTS_AWS_SESSION_TOKEN}
+        echo "profile=${INPUTS_PROFILE}" >> $GITHUB_OUTPUT
+        printf "::notice::\x1b[32;1mAWS Profile ${INPUTS_PROFILE} configured successfully\x1b[0m\n"
 
     # We cannot unset the variables due to https://github.com/actions/runner/issues/1126, but we can set them to fake values to prevent accidental use
     - name: Set AWS Environment Variables to fake values
       id: unset-env-vars
       if: ${{ inputs.only-profile == 'true' }}
       shell: bash
-      run: |
+      run: | # zizmor: ignore[github-env]
         echo "Setting dummy AWS Environment Variables"
         echo AWS_SECRET_ACCESS_KEY="this-value-has-been-set-to-invalid-to-prevent-wrong-creds-from-being-used" >> $GITHUB_ENV
         echo     AWS_ACCESS_KEY_ID="this-value-has-been-set-to-invalid-to-prevent-wrong-creds-from-being-used" >> $GITHUB_ENV
@@ -163,5 +169,7 @@ runs:
       id: whoami
       if: ${{ inputs.whoami == 'true' }}
       shell: bash
+      env:
+        INPUTS_PROFILE: ${{ inputs.profile }}
       run: |
-        aws sts --profile ${{ inputs.profile }} get-caller-identity
+        aws sts --profile ${INPUTS_PROFILE} get-caller-identity
